@@ -16,14 +16,17 @@ const REDUCER_TYPE = {
     REMOVE: "REMOVE",
     QUANTITY: "QUANTITY",
     SUBMIT: "SUBMIT"
-}
+} as const;
 
-export type ReducerAction = {
-    type: string,
+
+export type ACTION_TYPE_TYPE = keyof typeof REDUCER_TYPE;
+
+export type ReducerActionType = {
+    type: ACTION_TYPE_TYPE,
     payload?: CartItemType
 };
 
-const reducer = (state: CartStateType, action: ReducerAction): CartStateType => {
+const reducer = (state: CartStateType, action: ReducerActionType): CartStateType => {
     switch(action.type) {
         case REDUCER_TYPE.ADD: {
             if (!action.payload) {
@@ -34,11 +37,13 @@ const reducer = (state: CartStateType, action: ReducerAction): CartStateType => 
             const newCart = itemExists
                 ? state.cart.map((item): CartItemType => {
                       if (item.sku === payload.sku) {
+                        console.log(item.qty, payload.qty)
                           return { ...item, qty: item.qty + payload.qty };
                       }
                       return item;
                   })
                 : [...state.cart, action.payload];
+           
             return { ...state, cart: newCart };
         }
         case REDUCER_TYPE.QUANTITY: {
@@ -79,15 +84,15 @@ export const formatCurrency = (totalPrice: number): string => {
     }).format(totalPrice);
 }
 
+export type actions_type = Readonly<typeof REDUCER_TYPE>; 
+
 const useCartContext = (providedInitState: CartStateType = initCartState) => {
     const [state, dispatch] = useReducer(reducer, providedInitState);
-    const REDUCER_ACTIONS: Readonly<typeof REDUCER_TYPE> = useMemo(() => {
+    const REDUCER_ACTIONS: actions_type = useMemo(() => {
         return REDUCER_TYPE;
     }, [REDUCER_TYPE])
-    const totalItems: number = state.cart.length
-    const totalPrice: number = state.cart.reduce((total, item) => {
-        return total + item.price * item.qty;
-    }, 0);
+    const totalItems: number = state.cart.reduce((totalItems, item) => totalItems + item.qty, 0)
+    const totalPrice: number = state.cart.reduce((totalPrice, item) => totalPrice + item.price * item.qty, 0);
     const totalPriceFormatted: string = formatCurrency(totalPrice)
     const cart = state.cart.sort((a,b) => {
         const itemA = +a.sku.slice(-4);

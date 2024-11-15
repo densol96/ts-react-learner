@@ -6,8 +6,6 @@ import Footer from "./components/Footer"
 
 import { useCallback, useState } from "react"
 
-
-
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>(Page.PRODUCTS);
 

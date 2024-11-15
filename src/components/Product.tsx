@@ -13,8 +13,7 @@ function Product({ product }: {product: ProductType}) {
             <h3>{product.name}</h3>
             <img src={image} alt="Product image" className="product__img" />
             <p>{formatCurrency(product.price)}</p>
-            {inCart && '-> Item in Cart :)'}
-            <button onClick={onAddToCart}>Add to cart</button>
+            <button onClick={onAddToCart}>{!inCart ? 'Add to cart' : 'Add one more to cart' }</button>
         </article>
     )
 }

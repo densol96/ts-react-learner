@@ -7,7 +7,7 @@ function Products() {
     console.log(products);
     return (
         <div>
-            HELLO
+            {products.length === 0 && <p>Currently, there are no avaialable products for sale</p>}
             {products.map(product => <Product key={product.sku} product={product} /> )}
         </div>
     )
